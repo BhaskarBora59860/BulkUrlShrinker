@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/3373fc1c74.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+  <title>Document</title>
+</head>
+<body>
+  <div class="container">
+    <% if (typeof alertMessage !== 'undefined') { %>
+      <div id="alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <%= alertMessage %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% } %>
+
+    <h1>URL Shrinker</h1>
+    
+    <a href="/bulkUrls" class="btn btn-primary mb-4"> Create Bulk URLs</a> 
+
+
+    <form action="/shortUrls" method="POST" class="my-4 form-inline">
+      <label for="fullUrl" class="sr-only">URL</label>
+      <input required placeholder="URL" type="url" name="fullUrl" id="fullUrl" class="form-control col mr-2">
+
+      <label for="customUrl" class="sr-only">Custom URL</label>
+      <div class="input-group col">
+        <div class="input-group-prepend">
+          <div class="input-group-text">YourDomain.com/</div>
+        </div>
+        <input type="text" name="customUrl" id="customUrl" class="form-control" placeholder="Custom URL">
+      </div>
+      <div class="form-group">
+        <label for="expirationDate">Expiration Date (optional)</label>
+        <input type="date" class="form-control" id="expirationDate" name="expirationDate">
+      </div>
+
+      <button class="btn btn-success" type="submit">Shrink</button>
+    </form>
+    <form action="/shortUrls/deleteAll" method="POST">
+      <button class="btn btn-danger mb-4" type="submit">Delete All</button>
+    </form>
+    
+    <table class="table table-striped table-responsive">
+      <thead>
+        <tr>
+          <th>Full URL</th>
+          <th>Short URL</th>
+          <th>Expiration Date</th>
+          <th>Share</th>
+          <th>Clicks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% shortUrls.forEach(shortUrl => { %>
+          <tr>
+            <td><a href="<%= shortUrl.full %>"><%= shortUrl.full %></a></td>
+            <td><a href="<%= shortUrl.short %>"><%= shortUrl.short %></a></td>
+            <td>
+              <% if (shortUrl.expirationDate) { %>
+              <% if (new Date() > shortUrl.expirationDate) { %>
+              <p>Expired</p>
+              <% } else { %>
+              <p><%= shortUrl.expirationDate.toDateString() %></p>
+              <% } %>
+              <% } %>
+            </td>
+            <!-- Inside the table row for each URL -->
+<td>
+  <!-- class="btn btn-primary btn-sm" -->
+  <!-- class="btn btn-primary btn-sm" -->
+  <a href="/shortUrls/<%= shortUrl._id %>/share/facebook" ><i class="fa-brands fa-facebook fa-lg"></i></a>
+</td>
+
+            <td><%= shortUrl.clicks %></td>
+            <td>
+              <form action="/shortUrls/<%= shortUrl._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+              </form>
+            </td>
+           
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"></script>
+  
+  <script>
+    // Timeout to remove the alert message after 4 seconds
+    setTimeout(function() {
+      var alertElement = document.getElementById('alert');
+      if (alertElement) {
+        alertElement.classList.remove('show');
+      }
+    }, 4000);
+  </script>
+</body>
+</html>
+      

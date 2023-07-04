@@ -1,0 +1,72 @@
+<!-- bulkUrls.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Head content here -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <title>BulkUrls</title>
+</head>
+  <style>
+    #urls{
+      height: 80px;
+    }
+  </style>
+<body>
+  <div class="container">
+    <% if (typeof alertMessage !== 'undefined') { %>
+      <div id="alert-message" class="alert alert-danger">
+        <%= alertMessage %>
+      </div>
+    <% } %>
+
+    <h1>Bulk URL Shortener</h1>
+
+    <form action="/bulkUrls" method="POST">
+      <div class="form-group">
+        <label for="urls">Enter multiple URLs (one URL per line):</label>
+        <textarea class="form-control" id="urls" name="urls" rows="10"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="expirationDate">Expiration Date (optional)</label>
+        <input type="date" class="form-control" id="expirationDate" name="expirationDate">
+      </div>
+      <button type="submit" class="btn btn-primary">Shorten URLs</button>
+    </form>
+
+    <% if (typeof shortUrls !== 'undefined' && shortUrls.length > 0) { %>
+      <h2>Short URLs</h2>
+      <table class="table table-striped table-responsive">
+        <thead>
+          <tr>
+            <th>Full URL</th>
+            <th>Short URL</th>
+            <th>Expiration Date</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% shortUrls.forEach(shortUrl => { %>
+            <tr>
+              <td><a href="<%= shortUrl.full %>"><%= shortUrl.full %></a></td>
+              <td><a href="<%= shortUrl.short %>"><%= shortUrl.short %></a></td>
+              <td>
+                <% if (shortUrl.expirationDate) { %>
+                  <% if (new Date() > shortUrl.expirationDate) { %>
+                    <p>Expired</p>
+                  <% } else { %>
+                    <p><%= shortUrl.expirationDate.toDateString() %></p>
+                  <% } %>
+                <% } %>
+              </td>
+              <td><%= shortUrl.clicks %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</body>
+</html>
